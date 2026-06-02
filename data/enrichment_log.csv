@@ -1,0 +1,78 @@
+﻿文献ID,标题,DOI是否补全,PubMed是否补全,摘要是否补全,匹配来源和分数,是否需要人工核对
+paper_001,感染性发热临床检验路径专家共识,否,否,否,PubMed:none; Crossref:0.387,否
+paper_002,构建感染性发热的多维度全景式临床检验新范式,否,否,否,PubMed:none; Crossref:0.341,否
+paper_003,Two high-quality genomes of Prototheca bovis strain SH08 and Prototheca ciferrii strain SH13,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_004,A prospective cohort study on the association between cervical microenvironmental factors and the efficacy of treating high-risk human papillomavirus infection comorbid with cervical diseases.,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_005,The Epidemiology and Infection Control of Candida Auris in Shanghai,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_006,Gut-X axis.,否,否,否,PubMed:0.588; Crossref:0.750,是
+paper_007,The interplay between tissue-resident microbiome and host proteins by integrated multi-omics during progression of colorectal adenoma to carcinoma,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_008,A MALDI-TOF MS-based multiple detection panel of drug resistance-associated multiple single-nucleotide polymorphisms in Candida tropicalis,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_009,Analytical and clinical validation of multiplex droplet digital PCR assay for detecting pathogenic fungal infection in lungs,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_010,人类呼吸道微生物组及检测技术进展,否,否,否,PubMed:none; Crossref:0.581,否
+paper_011,A Machine learning model for predicting sepsis based on an optimized assay for microbial cell-free DNA sequencing,是,否,否,PubMed:none; Crossref:1.000,否
+paper_012,In Vitro Activitiy of Rezafungin in Comparison with Anidulafungin and Caspofungin against Invasive Fungal Isolates (2017 to 2022) in China,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_013,Transposition with Tn3-family elements occurs through interaction with the host β-sliding clamp processivity factor,是,是,是,PubMed:1.000; Crossref:0.996,否
+paper_014,Alteration of the gut microbiota changes during the one-year Antarctic deployment in a group of Chinese Han population,是,否,否,PubMed:none; Crossref:1.000,否
+paper_015,Performance of the Aspergillus galactomannan lateral flow assay with a digital reader for the diagnosis of invasive aspergillosis: a multicenter study,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_016,Metagenomics Next-Generation Sequencing (mNGS) Reveals Emerging Infection Induced by Klebsiella pneumoniae,是,是,是,PubMed:0.981; Crossref:0.981,否
+paper_017,Automated and ultrasensitive point-of-care glycoprotein detection using boronate-affinity enhanced organic electrochemical transistor patch,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_018,2017-2021年中国华东地区临床分离侵袭性感染热带念珠菌耐药状况分析,否,否,否,PubMed:0.138; Crossref:0.379,否
+paper_019,5种新型冠状病毒核酸检测试剂应用于DXcellenceTM全自动核酸检测分析系统的性能评估,否,否,否,PubMed:none; Crossref:0.381,否
+paper_020,新时代临床微生物学学科发展方向,否,否,否,PubMed:none; Crossref:0.545,否
+paper_021,阴道微生物组与HPV感染和宫颈病变的相关性研究进展,否,否,否,PubMed:0.043; Crossref:0.476,否
+paper_022,Efficacy of Active Rapid Molecular Screening and IPC Interventions on Carbapenem-Resistant Enterobacterales Infections in Emergency Intensive Care Units without Enough Single-Room Isolation,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_023,Editorial: New insights into the role of mycobiome in diseases,是,是,否,PubMed:1.000; Crossref:1.000,否
+paper_024,Alpha-Hemolysin from Staphylococcus aureus Obstructs Yeast-Hyphae Switching and Diminishes Pathogenicity in Candida albicans,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_025,Detection of pathogens and antimicrobial resistance genes directly from urine samples in patients suspected of urinary tract infection by metagenomics nanopore sequencing: A large-scale multi-centre study,是,是,否,PubMed:1.000; Crossref:1.000,否
+paper_026,"Integration of transcriptomics, proteomics, and metabolomics data for the detection of the human pathogenic Prototheca wickerhamii from a One Health perspective",是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_027,In vitro antifungal susceptibility profile and genotypic characterization of clinical Aspergillus isolates in Eastern China on behalf of Eastern China Invasive Fungi Infection Group,是,否,否,PubMed:none; Crossref:1.000,否
+paper_028,新型冠状病毒肺炎大型方舱医院感染预防控制风险管理探索,否,否,否,PubMed:none; Crossref:0.545,否
+paper_029,干燥奈瑟菌引起的心内膜炎1例并文献复习,否,否,否,PubMed:0.022; Crossref:0.400,否
+paper_030,病原宏基因组高通量测序医疗机构本地化质量评价联合研究,否,否,否,PubMed:none; Crossref:0.390,否
+paper_031,Assessment and establishment of a reference interval for Roche Cobas t 711 coagulation analyzer for a hospital in China,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_032,Comparative evaluation of Sensititre YeastOne and VITEK 2 against the Clinical and Laboratory Standards Institute M27-E4 reference broth microdilution method for the antifungal susceptibility testing of Cryptococcus neoformans and Cryptococcus gattii,是,是,是,PubMed:error:TimeoutError; Crossref:1.000,否
+paper_033,Molecular Epidemiology and Antifungal Resistance of Cryptococcus neoformans From Human Immunodeficiency Virus-Negative and Human Immunodeficiency Virus-Positive Patients in Eastern China,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_034,A novel algorithm for diagnosis of invasive pulmonary aspergillosis based on pentraxin 3 gene polymorphisms and its adjusted value among autoimmune diseases patients,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_035,Genome Sequences of Two Strains of Prototheca wickerhamii Provide Insight Into the Protothecosis Evolution,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_036,血浆微生物游离DNA宏基因组下一代测序在感染性疾病中的研究进展,否,否,否,PubMed:0.056; Crossref:error:TimeoutError,否
+paper_037,2019年上海市东方医院细菌耐药性监测,否,否,否,PubMed:0.058; Crossref:0.392,否
+paper_038,肺炎克雷伯菌整合子携带情况及与毒力基因和耐药性的关系,否,否,否,PubMed:none; Crossref:0.264,否
+paper_039,亚抑菌浓度抗生素对高毒力肺炎克雷伯菌毒力基因表达的影响,否,否,否,PubMed:none; Crossref:0.370,否
+paper_040,Sandwich/competitive immuno-sensors on micro-interface for SARS CoV-2 neutralizing antibodies,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_041,Quality Management for Point-Of-Care Testing of Pathogen Nucleic Acids: Chinese Expert Consensus,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_042,Sample-to-Answer and Routine Real-Time RT-PCR A Comparison of Different Platforms for SARS-CoV-2 Detection,是,是,是,PubMed:1.000; Crossref:0.596,否
+paper_043,In vitro activities of the tetrazole VT-1161 compared with itraconazole and fluconazole against Cryptococcus and non-albicans Candida species,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_044,Plasma Microbial Cell-Free DNA Sequencing Technology for the Diagnosis of Sepsis in the ICU,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_045,Prevalence and Antifungal Susceptibility of Candida parapsilosis Species Complex in Eastern China: A 15-Year Retrospective Study by ECIFIG,是,否,否,PubMed:none; Crossref:1.000,否
+paper_046,"Current status of oxacillin-susceptible mecA- positive Staphylococcus aureus infection in Shanghai, China: A multicenter study",是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_047,Multicenter assessment of shotgun metagenomics for pathogen detection,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_048,肝胆胰外科手术单病种临床用血分析,否,否,否,PubMed:none; Crossref:0.424,否
+paper_049,RT-PCR快速检测产KPC型碳青霉烯酶肺炎克雷伯菌临床应用评价,否,否,否,PubMed:none; Crossref:0.400,否
+paper_050,COVID-19方舱医院医学检验科建设和管理初探,否,否,否,PubMed:0.170; Crossref:0.359,否
+paper_051,曲霉IgG抗体的生物参考区间建立,否,否,否,PubMed:0.050; Crossref:0.267,否
+paper_052,不同基质辅助激光解吸电离飞行时间质谱系统对链球菌鉴定性能的比较,否,否,否,PubMed:none; Crossref:0.613,否
+paper_053,新冠肺炎疫情期间方舱医院院内感染管理探讨,否,否,否,PubMed:none; Crossref:0.585,否
+paper_054,从重大突发公共卫生事件看医院检验科在国家公共卫生体系建设中的定位与作用,否,否,否,PubMed:none; Crossref:0.407,否
+paper_055,Whole-Genome Comparative and Pathogenicity Analysis ofSalmonella entericasubsp.entericaSerovar Rissen,是,否,否,PubMed:none; Crossref:0.985,否
+paper_056,"Status of occupational protection in the COVID-19 Fangcang Shelter Hospital in Wuhan, China",是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_057,Multicenter evaluation of three different MALDI-TOF MS systems for identification of clinically relevant filamentous fungi,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_058,Microfluidic Immunoassays for Sensitive and Simultaneous Detection of IgG/IgM/Antigen of SARS-CoV-2 within 15 min,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_059,"Neutrophil-to-lymphocyte ratio predicts the clearance of SARS-CoV-2 RNA in mild COVID-19 patients - A retrospective analysis from Dongxihu Fangcang Hospital in Wuhan, China",是,是,否,PubMed:1.000; Crossref:1.000,否
+paper_060,Differential expression analysis of the SRB1 gene in fluconazole-resistant and susceptible strains of Candida albicans,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_061,Hexokinase 2 Depletion Confers Sensitization to Metformin and Inhibits Glycolysis in Lung Squamous Cell Carcinoma,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_062,上海地区临床分离念珠菌的耐药性监测,否,否,否,PubMed:none; Crossref:0.359,否
+paper_063,白念珠菌环介导等温扩增法的建立及其应用价值,否,否,否,PubMed:none; Crossref:0.400,否
+paper_064,白念珠菌唑类药物耐药机制研究进展,否,否,否,PubMed:none; Crossref:0.615,否
+paper_065,智能化微生物实验室信息系统移动终端和PC终端的设计与应用,否,否,否,PubMed:0.035; Crossref:0.381,否
+paper_066,Gprc5a depletion enhances the risk of smoking-induced lung tumorigenesis and mortality,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_067,Galactomannan detection in bronchoalveolar lavage fluid corrected by urea dilution for the diagnosis of invasive pulmonary aspergillosis among nonneutropenic patients,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_068,感染性疾病现场快速检验技术的现状与未来,否,否,否,PubMed:none; Crossref:0.516,否
+paper_069,"Deubiquitination and stabilization of programmed cell death ligand 1 by ubiquitin-specific peptidase 9, X-linked in oral squamous cell carcinoma",是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_070,Streptococcus agalactiae Inhibits Candida albicans Hyphal Development and Diminishes Host Vaginal Mucosal TH17 Response,是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_071,Targeted chimera delivery to ovarian cancer cells by heterogeneous gold magnetic nanoparticle,是,是,是,PubMed:1.000; Crossref:error:TimeoutError,否
+paper_072,Type VI secretion system contributes to Enterohemorrhagic Escherichia coli virulence by secreting catalase against host reactive oxygen species (ROS),是,是,是,PubMed:1.000; Crossref:1.000,否
+paper_073,长梗木霉感染引起的腹膜炎1例报道,否,否,否,PubMed:0.023; Crossref:0.311,否
+paper_074,尿路感染患者泌尿系统分离菌株中非白念珠菌的分布及其耐药性研究,否,否,否,PubMed:none; Crossref:0.367,否
+paper_075,探索侵袭性真菌病预测诊断和个体化治疗之路,否,否,否,PubMed:none; Crossref:0.438,否
+paper_076,结核分枝杆菌Rv1273 c-Rv1272 c转运功能的初步研究,否,否,否,PubMed:none; Crossref:0.327,否
+paper_077,A novel bio-microcircuit for bio-assays,是,否,否,PubMed:0.305; Crossref:1.000,否

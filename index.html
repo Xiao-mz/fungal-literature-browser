@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>上海东方南院检验科真菌组代表性文献查阅平台</title>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <div>
+          <p class="eyebrow">Literature Browser</p>
+          <h1 class="hero-title">
+            <span>上海东方南院检验科</span>
+            <span>真菌组代表性文献查阅平台</span>
+          </h1>
+          <p class="subtitle">按关键词快速检索近十年文献</p>
+          <p class="motto">求索·温故·知新</p>
+        </div>
+        <div class="stats-grid" aria-label="文献统计">
+          <div class="stat-item">
+            <span class="stat-value" id="statTotal">0</span>
+            <span class="stat-label">当前收录</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="statReview">0</span>
+            <span class="stat-label">综述</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="statResearch">0</span>
+            <span class="stat-label">研究文章</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="toolbar" aria-label="检索与筛选">
+        <label class="search-box" for="searchInput">
+          <span>搜索</span>
+          <input id="searchInput" type="search" placeholder="标题、作者、期刊、年份、关键词、摘要">
+        </label>
+
+        <label class="select-box" for="yearFilter">
+          <span>年份</span>
+          <select id="yearFilter">
+            <option value="all">全部年份</option>
+          </select>
+        </label>
+
+        <label class="select-box" for="statusFilter">
+          <span>补全状态</span>
+          <select id="statusFilter">
+            <option value="all">全部</option>
+            <option value="has-abstract">有摘要</option>
+            <option value="has-doi">有 DOI</option>
+            <option value="has-pubmed">有 PubMed</option>
+            <option value="no-external">无外部链接</option>
+          </select>
+        </label>
+
+        <label class="select-box" for="sortSelect">
+          <span>排序</span>
+          <select id="sortSelect">
+            <option value="year-desc">年份从新到旧</option>
+            <option value="year-asc">年份从旧到新</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="utility-bar" aria-label="文献管理">
+        <button class="primary-action" id="openAddPaper" type="button">新增文献</button>
+        <span class="utility-note">新增文献会保存在本机浏览器中，并立即加入当前列表。</span>
+      </section>
+
+      <div class="content-layout">
+        <aside class="keyword-panel" aria-label="关键词分类">
+          <div class="panel-heading">
+            <h2>关键词</h2>
+            <button class="text-button" id="clearKeyword" type="button">清除</button>
+          </div>
+          <div class="keyword-list" id="keywordList"></div>
+        </aside>
+
+        <section class="result-panel" aria-live="polite">
+          <div class="result-heading">
+            <div>
+              <h2 id="resultTitle">全部文献</h2>
+              <p id="resultMeta">正在载入文献数据...</p>
+            </div>
+          </div>
+          <div class="paper-list" id="paperList"></div>
+          <div class="empty-state" id="emptyState" hidden>
+            <h3>未找到匹配文献</h3>
+            <p>请调整关键词、年份、补全状态或搜索内容后再试。</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Last updated: <span id="lastUpdated">-</span>
+    </footer>
+
+    <div class="modal-backdrop" id="addPaperModal" hidden>
+      <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="addPaperTitle">
+        <div class="modal-header">
+          <h2 id="addPaperTitle">新增文献</h2>
+          <button class="icon-button" id="closeAddPaper" type="button" aria-label="关闭">×</button>
+        </div>
+
+        <form class="paper-form" id="addPaperForm">
+          <div class="form-grid">
+            <label class="form-field full-span">
+              <span>论文标题</span>
+              <input name="title" type="text" required>
+            </label>
+
+            <label class="form-field">
+              <span>DOI</span>
+              <input name="doi" type="text" placeholder="10.xxxx/xxxxx">
+            </label>
+
+            <label class="form-field">
+              <span>PubMed ID</span>
+              <input name="pubmed" type="text" inputmode="numeric">
+            </label>
+
+            <label class="form-field">
+              <span>作者</span>
+              <input name="authors" type="text">
+            </label>
+
+            <label class="form-field">
+              <span>发表年份</span>
+              <input name="year" type="number" min="1900" max="2100">
+            </label>
+
+            <label class="form-field">
+              <span>本人角色</span>
+              <select name="role">
+                <option value="">未选择</option>
+                <option value="第一作者">第一作者</option>
+                <option value="通讯作者">通讯作者</option>
+                <option value="第一作者；通讯作者">第一作者；通讯作者</option>
+              </select>
+            </label>
+
+            <label class="form-field">
+              <span>全文链接</span>
+              <input name="fullTextUrl" type="url" placeholder="https://">
+            </label>
+
+            <label class="form-field full-span">
+              <span>关键词</span>
+              <input name="keywords" type="text" placeholder="多个关键词可用中文逗号、英文逗号或分号分隔">
+            </label>
+
+            <label class="form-field full-span">
+              <span>摘要</span>
+              <textarea name="abstract" rows="5"></textarea>
+            </label>
+          </div>
+
+          <div class="form-message" id="addPaperMessage" role="status" aria-live="polite"></div>
+
+          <div class="form-actions">
+            <button class="secondary-button" id="cancelAddPaper" type="button">取消</button>
+            <button class="primary-action" type="submit">保存到列表</button>
+          </div>
+          <p class="form-note">⚠️ 本地新增文献仅对当前浏览器可见，团队共享需管理员更新仓库 JSON 文件或采用其他集中方式。</p>
+        </form>
+      </div>
+    </div>
+
+    <noscript>此页面需要启用 JavaScript 才能进行检索和筛选。</noscript>
+    <script src="data/papers.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
