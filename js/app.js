@@ -1,5 +1,324 @@
 (function () {
-  const LOCAL_PAPERS_KEY = "literatureBrowser.localPapers.v1";
+  const PUBMED_KEYWORD_MAP = {
+    真菌感染: "fungal infection",
+    病原真菌: "pathogenic fungi",
+    病原微生物: "pathogenic microorganism",
+    感染性疾病: "infectious disease",
+    感染性发热: "febrile illness",
+    抗真菌耐药: "antifungal resistance",
+    耐药性: "drug resistance",
+    念珠菌: "Candida",
+    耳念珠菌: "Candida auris",
+    曲霉: "Aspergillus",
+    烟曲霉: "Aspergillus fumigatus",
+    侵袭性真菌病: "invasive fungal disease",
+    血流感染: "bloodstream infection",
+    分子诊断: "molecular diagnosis",
+    临床检验: "clinical laboratory testing",
+    临床微生物: "clinical microbiology",
+    基因测序: "gene sequencing",
+    宏基因组测序: "metagenomic sequencing",
+    病原宏基因组测序: "metagenomic next-generation sequencing",
+    药敏试验: "antifungal susceptibility testing",
+    流行病学: "epidemiology",
+    肺炎克雷伯菌: "Klebsiella pneumoniae",
+    碳青霉烯耐药: "carbapenem resistance",
+    新型冠状病毒: "SARS-CoV-2",
+    新冠肺炎: "COVID-19",
+    微生物组: "microbiome",
+    肿瘤微环境: "tumor microenvironment",
+    多组学: "multi-omics",
+    脓毒症: "sepsis",
+    数字PCR: "digital PCR",
+    结核分枝杆菌: "Mycobacterium tuberculosis",
+    病例报道: "case report",
+  };
+
+  const BROAD_PUBMED_KEYWORDS = new Set([
+    "研究",
+    "分析",
+    "检测",
+    "临床",
+    "文章",
+    "文献",
+    "综述",
+    "进展",
+    "其他",
+    "study",
+    "analysis",
+    "detection",
+    "clinical",
+    "article",
+    "literature",
+    "review",
+    "progress",
+    "other",
+  ]);
+
+  const DEBUG_SIMILAR_PUBMED = false;
+
+  const TITLE_STOP_WORDS = new Set([
+    "a",
+    "an",
+    "the",
+    "of",
+    "in",
+    "on",
+    "at",
+    "to",
+    "for",
+    "from",
+    "with",
+    "without",
+    "by",
+    "and",
+    "or",
+    "but",
+    "as",
+    "among",
+    "between",
+    "during",
+    "through",
+    "using",
+    "based",
+    "via",
+    "into",
+    "after",
+    "before",
+    "two",
+    "three",
+    "multiple",
+    "novel",
+    "new",
+    "high",
+    "low",
+    "high-quality",
+    "quality",
+    "clinical",
+    "different",
+    "comparative",
+    "potential",
+    "possible",
+    "important",
+    "significant",
+    "major",
+    "rapid",
+    "recent",
+    "current",
+    "first",
+    "preliminary",
+    "retrospective",
+    "prospective",
+    "multicenter",
+    "systematic",
+    "comprehensive",
+  ]);
+
+  const TITLE_GENERIC_TERMS = new Set([
+    "study",
+    "analysis",
+    "evaluation",
+    "assessment",
+    "investigation",
+    "characterization",
+    "comparison",
+    "report",
+    "review",
+    "progress",
+    "overview",
+    "research",
+    "result",
+    "results",
+    "case",
+    "cases",
+    "article",
+    "paper",
+    "approach",
+    "method",
+    "methods",
+    "role",
+    "effect",
+    "effects",
+    "relationship",
+    "association",
+    "status",
+    "current status",
+    "机制",
+    "研究",
+    "进展",
+    "分析",
+    "检测",
+    "临床",
+    "分离",
+  ]);
+
+  const TITLE_CONCEPT_MAP = {
+    烟曲霉: "Aspergillus fumigatus",
+    曲霉: "Aspergillus",
+    念珠菌: "Candida",
+    白念珠菌: "Candida albicans",
+    耳念珠菌: "Candida auris",
+    热带念珠菌: "Candida tropicalis",
+    肺炎克雷伯菌: "Klebsiella pneumoniae",
+    结核分枝杆菌: "Mycobacterium tuberculosis",
+    金黄色葡萄球菌: "Staphylococcus aureus",
+    无乳链球菌: "Streptococcus agalactiae",
+    新型冠状病毒: "SARS-CoV-2",
+    新冠肺炎: "COVID-19",
+    人乳头瘤病毒: "human papillomavirus",
+    真菌感染: "fungal infection",
+    侵袭性真菌病: "invasive fungal disease",
+    侵袭性曲霉病: "invasive aspergillosis",
+    侵袭性念珠菌病: "invasive candidiasis",
+    血流感染: "bloodstream infection",
+    尿路感染: "urinary tract infection",
+    心内膜炎: "infective endocarditis",
+    感染性疾病: "infectious disease",
+    感染性发热: "febrile illness",
+    耐药性: "drug resistance",
+    耐药: "drug resistance",
+    抗真菌耐药: "antifungal resistance",
+    唑类耐药: "azole resistance",
+    碳青霉烯耐药: "carbapenem resistance",
+    药敏试验: "antifungal susceptibility testing",
+    全基因组测序: "whole-genome sequencing",
+    高通量测序: "high-throughput sequencing",
+    宏基因组测序: "metagenomic sequencing",
+    宏基因组下一代测序: "metagenomic next-generation sequencing",
+    病原宏基因组测序: "metagenomic next-generation sequencing",
+    微生物游离DNA: "microbial cell-free DNA",
+    微生物组: "microbiome",
+    肠道微生物群: "gut microbiota",
+    多组学: "multi-omics",
+    转录组: "transcriptome",
+    蛋白质组: "proteomics",
+    代谢组: "metabolomics",
+    分子诊断: "molecular diagnosis",
+    流行病学: "epidemiology",
+    毒力基因: "virulence gene",
+    毒力: "virulence",
+    生物膜: "biofilm",
+    突变: "mutation",
+    基因组: "genome",
+    质谱: "mass spectrometry",
+    基质辅助激光解吸电离飞行时间质谱: "MALDI-TOF MS",
+    数字PCR: "digital PCR",
+    脓毒症: "sepsis",
+    抗生素: "antibiotic",
+    监测: "surveillance",
+  };
+
+  const TITLE_PHRASE_TERMS = [
+    ["metagenomic next-generation sequencing", "metagenomic next-generation sequencing", 75, "technique"],
+    ["metagenomics next-generation sequencing", "metagenomic next-generation sequencing", 75, "technique"],
+    ["metagenomic sequencing", "metagenomic sequencing", 75, "technique"],
+    ["whole-genome sequencing", "whole-genome sequencing", 75, "technique"],
+    ["whole genome sequencing", "whole-genome sequencing", 75, "technique"],
+    ["microbial cell-free dna sequencing", "microbial cell-free DNA sequencing", 75, "technique"],
+    ["cell-free dna sequencing", "cell-free DNA sequencing", 75, "technique"],
+    ["maldi-tof ms", "MALDI-TOF MS", 75, "technique"],
+    ["mass spectrometry", "mass spectrometry", 75, "technique"],
+    ["digital pcr", "digital PCR", 75, "technique"],
+    ["droplet digital pcr", "droplet digital PCR", 75, "technique"],
+    ["rt-pcr", "RT-PCR", 75, "technique"],
+    ["antifungal susceptibility testing", "antifungal susceptibility testing", 75, "technique"],
+    ["lateral flow assay", "lateral flow assay", 75, "technique"],
+    ["molecular diagnosis", "molecular diagnosis", 75, "technique"],
+    ["genome sequences", "genome", 75, "technique"],
+    ["genome sequence", "genome", 75, "technique"],
+    ["whole genomes", "whole genome", 75, "technique"],
+    ["genomes", "genome", 75, "technique"],
+    ["genome", "genome", 75, "technique"],
+    ["bloodstream infection", "bloodstream infection", 85, "disease"],
+    ["invasive aspergillosis", "invasive aspergillosis", 85, "disease"],
+    ["invasive candidiasis", "invasive candidiasis", 85, "disease"],
+    ["fungal infection", "fungal infection", 85, "disease"],
+    ["urinary tract infection", "urinary tract infection", 85, "disease"],
+    ["infective endocarditis", "infective endocarditis", 85, "disease"],
+    ["human papillomavirus infection", "human papillomavirus infection", 85, "disease"],
+    ["cervical lesion", "cervical lesion", 85, "disease"],
+    ["cervical disease", "cervical disease", 85, "disease"],
+    ["drug resistance", "drug resistance", 85, "disease"],
+    ["antifungal resistance", "antifungal resistance", 85, "disease"],
+    ["antifungal-resistant", "antifungal resistance", 85, "disease"],
+    ["azole resistance", "azole resistance", 85, "disease"],
+    ["carbapenem resistance", "carbapenem resistance", 85, "disease"],
+    ["candida auris", "Candida auris", 100, "species"],
+    ["candida albicans", "Candida albicans", 100, "species"],
+    ["candida tropicalis", "Candida tropicalis", 100, "species"],
+    ["candida parapsilosis", "Candida parapsilosis", 100, "species"],
+    ["aspergillus fumigatus", "Aspergillus fumigatus", 100, "species"],
+    ["klebsiella pneumoniae", "Klebsiella pneumoniae", 100, "species"],
+    ["mycobacterium tuberculosis", "Mycobacterium tuberculosis", 100, "species"],
+    ["staphylococcus aureus", "Staphylococcus aureus", 100, "species"],
+    ["streptococcus agalactiae", "Streptococcus agalactiae", 100, "species"],
+    ["sars-cov-2", "SARS-CoV-2", 95, "pathogen"],
+    ["covid-19", "COVID-19", 95, "pathogen"],
+    ["microbiome", "microbiome", 65, "topic"],
+    ["microbiota", "microbiota", 65, "topic"],
+    ["multi-omics", "multi-omics", 65, "topic"],
+    ["transcriptomics", "transcriptomics", 65, "topic"],
+    ["proteomics", "proteomics", 65, "topic"],
+    ["metabolomics", "metabolomics", 65, "topic"],
+    ["epidemiology", "epidemiology", 65, "topic"],
+    ["surveillance", "surveillance", 65, "topic"],
+    ["virulence gene", "virulence gene", 65, "topic"],
+    ["virulence", "virulence", 65, "topic"],
+    ["biofilm", "biofilm", 65, "topic"],
+    ["diagnosis", "diagnosis", 65, "topic"],
+    ["sepsis", "sepsis", 85, "disease"],
+    ["resistance", "resistance", 65, "topic"],
+    ["mutation", "mutation", 65, "topic"],
+    ["mutations", "mutation", 65, "topic"],
+    ["susceptibility", "susceptibility", 65, "topic"],
+    ["prevalence", "prevalence", 65, "topic"],
+    ["expression", "expression", 65, "topic"],
+    ["distribution", "distribution", 65, "topic"],
+  ];
+
+  const TITLE_DRUG_TERMS = [
+    "voriconazole",
+    "itraconazole",
+    "posaconazole",
+    "isavuconazole",
+    "fluconazole",
+    "amphotericin B",
+    "echinocandin",
+    "anidulafungin",
+    "caspofungin",
+    "rezafungin",
+    "azole",
+    "carbapenem",
+    "antibiotic",
+  ];
+
+  const TITLE_PATHOGEN_GENERA = new Set([
+    "Aspergillus",
+    "Candida",
+    "Cryptococcus",
+    "Klebsiella",
+    "Mycobacterium",
+    "Prototheca",
+    "Staphylococcus",
+    "Streptococcus",
+  ]);
+
+  const INVALID_LATIN_SPECIES_WORDS = new Set([
+    "assay",
+    "complex",
+    "detection",
+    "galactomannan",
+    "genome",
+    "genomes",
+    "group",
+    "infection",
+    "infections",
+    "isolate",
+    "isolates",
+    "resistance",
+    "species",
+    "susceptibility",
+  ]);
 
   const state = {
     papers: [],
@@ -23,7 +342,7 @@
     try {
       const payload = await loadPaperData();
       const basePapers = Array.isArray(payload) ? payload : payload.papers || [];
-      state.papers = normalizePapers([...basePapers, ...loadStoredPapers(LOCAL_PAPERS_KEY)]);
+      state.papers = normalizePapers(basePapers);
       state.generatedAt = payload.generatedAt || "";
       setupYearFilter();
       render();
@@ -47,12 +366,7 @@
     els.paperList = document.getElementById("paperList");
     els.emptyState = document.getElementById("emptyState");
     els.lastUpdated = document.getElementById("lastUpdated");
-    els.openAddPaper = document.getElementById("openAddPaper");
-    els.addPaperModal = document.getElementById("addPaperModal");
-    els.closeAddPaper = document.getElementById("closeAddPaper");
-    els.cancelAddPaper = document.getElementById("cancelAddPaper");
-    els.addPaperForm = document.getElementById("addPaperForm");
-    els.addPaperMessage = document.getElementById("addPaperMessage");
+    els.submissionFormLink = document.getElementById("submissionFormLink");
   }
 
   function bindEvents() {
@@ -82,145 +396,27 @@
       renderResults();
     });
 
-    els.openAddPaper?.addEventListener("click", openAddPaperModal);
-    els.closeAddPaper?.addEventListener("click", closeAddPaperModal);
-    els.cancelAddPaper?.addEventListener("click", closeAddPaperModal);
-    els.addPaperForm?.addEventListener("submit", handleAddPaperSubmit);
-    els.addPaperModal?.addEventListener("click", (event) => {
-      if (event.target === els.addPaperModal) {
-        closeAddPaperModal();
-      }
+    setupSubmissionLink();
+  }
+
+  function setupSubmissionLink() {
+    if (!els.submissionFormLink) return;
+    const config = window.LITERATURE_BROWSER_CONFIG || {};
+    const url = String(config.submissionFormUrl || "").trim();
+    const isConfigured = url && url !== "REPLACE_WITH_GOOGLE_FORM_URL" && /^https?:\/\//i.test(url);
+
+    if (isConfigured) {
+      els.submissionFormLink.href = url;
+      els.submissionFormLink.setAttribute("aria-disabled", "false");
+      return;
+    }
+
+    els.submissionFormLink.href = "#";
+    els.submissionFormLink.setAttribute("aria-disabled", "true");
+    els.submissionFormLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      window.alert("投稿表单尚未配置，请联系平台管理员。");
     });
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !els.addPaperModal?.hidden) {
-        closeAddPaperModal();
-      }
-    });
-  }
-
-  function openAddPaperModal() {
-    if (!els.addPaperModal || !els.addPaperForm) return;
-    resetFormMessage();
-    els.addPaperModal.hidden = false;
-    document.body.classList.add("modal-open");
-    els.addPaperForm.elements.title?.focus();
-  }
-
-  function closeAddPaperModal() {
-    if (!els.addPaperModal || !els.addPaperForm) return;
-    els.addPaperModal.hidden = true;
-    document.body.classList.remove("modal-open");
-    els.addPaperForm.reset();
-    resetFormMessage();
-  }
-
-  function handleAddPaperSubmit(event) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const title = getFormValue(formData, "title");
-
-    if (!title) {
-      showFormMessage("请填写论文标题。", "error");
-      form.elements.title?.focus();
-      return;
-    }
-
-    const doi = cleanDoi(getFormValue(formData, "doi"));
-    const pubmed = cleanPubMed(getFormValue(formData, "pubmed"));
-    const duplicateMessage = getDuplicateMessage(doi, pubmed);
-    if (duplicateMessage) {
-      showFormMessage(duplicateMessage, "error");
-      window.alert(duplicateMessage);
-      return;
-    }
-
-    const paper = normalizePapers([
-      {
-        id: generatePaperId(),
-        title,
-        authors: getFormValue(formData, "authors"),
-        year: getFormValue(formData, "year"),
-        journal: "",
-        keywords: splitKeywords(getFormValue(formData, "keywords")),
-        abstract: getFormValue(formData, "abstract"),
-        doi,
-        doiUrl: makeDoiUrl(doi),
-        pubmed,
-        pubmedUrl: makePubMedUrl(pubmed),
-        fullTextUrl: normalizeUrl(getFormValue(formData, "fullTextUrl")) || makeDoiUrl(doi),
-        role: getFormValue(formData, "role"),
-        note: "",
-      },
-    ])[0];
-
-    const storedPapers = normalizePapers(loadStoredPapers(LOCAL_PAPERS_KEY));
-    storedPapers.push(paper);
-    try {
-      saveStoredPapers(LOCAL_PAPERS_KEY, storedPapers);
-    } catch (error) {
-      return;
-    }
-
-    state.papers.push(paper);
-    resetFiltersAfterAdd();
-    setupYearFilter();
-    render();
-    closeAddPaperModal();
-  }
-
-  function getFormValue(formData, name) {
-    return String(formData.get(name) || "").trim();
-  }
-
-  function getDuplicateMessage(doi, pubmed) {
-    const normalizedDoi = cleanDoi(doi).toLowerCase();
-    const normalizedPubMed = cleanPubMed(pubmed);
-
-    if (
-      normalizedDoi &&
-      state.papers.some((paper) => cleanDoi(paper.doi).toLowerCase() === normalizedDoi)
-    ) {
-      return "已存在相同 DOI 的文献，请勿重复添加。";
-    }
-
-    if (
-      normalizedPubMed &&
-      state.papers.some((paper) => cleanPubMed(paper.pubmed) === normalizedPubMed)
-    ) {
-      return "已存在相同 PubMed ID 的文献，请勿重复添加。";
-    }
-
-    return "";
-  }
-
-  function generatePaperId() {
-    const maxNumber = state.papers.reduce((max, paper) => {
-      const match = String(paper.id || "").match(/^paper_(\d+)$/);
-      return match ? Math.max(max, Number.parseInt(match[1], 10) || 0) : max;
-    }, 0);
-    return `paper_${String(maxNumber + 1).padStart(3, "0")}`;
-  }
-
-  function resetFiltersAfterAdd() {
-    state.activeKeyword = "";
-    state.query = "";
-    state.year = "all";
-    state.status = "all";
-    state.sort = "year-desc";
-    if (els.searchInput) els.searchInput.value = "";
-    if (els.statusFilter) els.statusFilter.value = "all";
-    if (els.sortSelect) els.sortSelect.value = "year-desc";
-  }
-
-  function showFormMessage(message, type) {
-    if (!els.addPaperMessage) return;
-    els.addPaperMessage.textContent = message;
-    els.addPaperMessage.className = `form-message ${type || ""}`.trim();
-  }
-
-  function resetFormMessage() {
-    showFormMessage("", "");
   }
 
   async function loadPaperData() {
@@ -237,25 +433,6 @@
       return window.PAPERS_DATA;
     }
     throw new Error("无法读取 data/papers.json。");
-  }
-
-  function loadStoredPapers(key) {
-    try {
-      const raw = window.localStorage.getItem(key);
-      const parsed = raw ? JSON.parse(raw) : [];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (error) {
-      return [];
-    }
-  }
-
-  function saveStoredPapers(key, papers) {
-    try {
-      window.localStorage.setItem(key, JSON.stringify(papers));
-    } catch (error) {
-      showFormMessage("浏览器本地存储不可用，暂时无法保存新增文献。", "error");
-      throw error;
-    }
   }
 
   function normalizePapers(papers) {
@@ -425,6 +602,10 @@
     addLinkButton(actions, "DOI", paper.doiUrl);
     addLinkButton(actions, "PubMed", paper.pubmedUrl);
     addLinkButton(actions, "Full Text", paper.fullTextUrl);
+    addLinkButton(actions, "查看相似SCI文献", buildSimilarPubmedUrl(paper), {
+      className: "similar-papers-button",
+      title: "根据该文献关键词组合检索 PubMed 相似主题文献",
+    });
 
     card.append(titleButton, meta, authors, keywordRow, preview, actions);
 
@@ -447,14 +628,17 @@
     container.appendChild(item);
   }
 
-  function addLinkButton(container, label, href) {
+  function addLinkButton(container, label, href, options = {}) {
     if (!href) return;
     const link = document.createElement("a");
-    link.className = "link-button";
+    link.className = options.className ? `link-button ${options.className}` : "link-button";
     link.href = href;
     link.textContent = label;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
+    if (options.title) {
+      link.title = options.title;
+    }
     container.appendChild(link);
   }
 
@@ -531,6 +715,10 @@
   }
 
   function inferPaperType(paper) {
+    if (["review", "research", "case", "other"].includes(paper.paperType)) {
+      return paper.paperType;
+    }
+
     const explicitType = [
       paper.articleType,
       paper.type,
@@ -608,6 +796,329 @@
 
   function getYears(papers) {
     return Array.from(new Set(papers.map((paper) => paper.year).filter(Boolean)));
+  }
+
+  function buildSimilarPubmedUrl(paper) {
+    const search = buildSimilarPubmedSearch(paper);
+    return search.url;
+  }
+
+  function buildSimilarPubmedSearch(paper) {
+    const candidates = getPubmedTermCandidates(paper);
+    const terms = extractPubmedTermsFromTitle(paper, candidates);
+    const query = terms.length ? terms.map(formatPubmedTerm).join(" AND ") : "";
+    const url = query ? `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(query)}` : "";
+    debugSimilarPubmed(paper, candidates, terms, query, url);
+    return { candidates, terms, query, url };
+  }
+
+  function buildPubmedQueryFromTitle(paper) {
+    const terms = extractPubmedTermsFromTitle(paper);
+    return terms.length ? terms.map(formatPubmedTerm).join(" AND ") : "";
+  }
+
+  function extractPubmedTermsFromTitle(paper, precomputedCandidates) {
+    const candidates = precomputedCandidates || getPubmedTermCandidates(paper);
+    return selectPubmedTerms(candidates).map((candidate) => candidate.term);
+  }
+
+  function getPubmedTermCandidates(paper) {
+    const title = normalizeComparableText(paper?.title || "");
+    const candidates = [];
+    addChineseTitleCandidates(candidates, title);
+    addEnglishPhraseCandidates(candidates, title);
+    addLatinBinomialCandidates(candidates, title);
+    addPathogenGenusCandidates(candidates, title);
+    addGeneMutationCandidates(candidates, title);
+    addDrugCandidates(candidates, title);
+
+    const titleCandidates = sortCandidates(candidates);
+    if (titleCandidates.length < 2) {
+      addKeywordSupplementCandidates(candidates, paper?.keywords || [], title);
+    }
+
+    return sortCandidates(candidates);
+  }
+
+  function addChineseTitleCandidates(candidates, title) {
+    const keys = Object.keys(TITLE_CONCEPT_MAP).sort((a, b) => b.length - a.length);
+    keys.forEach((key) => {
+      const index = title.indexOf(key);
+      if (index === -1) return;
+      const term = TITLE_CONCEPT_MAP[key];
+      const classification = classifyPubmedTerm(term);
+      addPubmedCandidate(candidates, {
+        term,
+        score: classification.score,
+        category: classification.category,
+        index,
+        source: "title-map",
+        matched: key,
+      });
+    });
+  }
+
+  function addEnglishPhraseCandidates(candidates, title) {
+    const lowerTitle = title.toLowerCase();
+    TITLE_PHRASE_TERMS.forEach(([phrase, term, score, category]) => {
+      const index = lowerTitle.indexOf(phrase);
+      if (index === -1) return;
+      addPubmedCandidate(candidates, {
+        term,
+        score,
+        category,
+        index,
+        source: "title-phrase",
+        matched: phrase,
+      });
+    });
+  }
+
+  function addLatinBinomialCandidates(candidates, title) {
+    const pattern = /\b([A-Z][a-z]{2,})\s+([A-Za-z][a-z-]{2,})\b/g;
+    let match;
+    while ((match = pattern.exec(title)) !== null) {
+      const genus = match[1];
+      const species = match[2].toLowerCase();
+      if (!TITLE_PATHOGEN_GENERA.has(genus)) continue;
+      if (INVALID_LATIN_SPECIES_WORDS.has(species)) continue;
+      addPubmedCandidate(candidates, {
+        term: `${genus} ${species}`,
+        score: 100,
+        category: "species",
+        index: match.index,
+        source: "latin-binomial",
+        matched: match[0],
+      });
+    }
+  }
+
+  function addPathogenGenusCandidates(candidates, title) {
+    TITLE_PATHOGEN_GENERA.forEach((genus) => {
+      const match = title.match(new RegExp(`\\b${escapeRegExp(genus)}\\b`, "i"));
+      if (!match || match.index === undefined) return;
+      addPubmedCandidate(candidates, {
+        term: genus,
+        score: 95,
+        category: "pathogen",
+        index: match.index,
+        source: "pathogen-genus",
+        matched: match[0],
+      });
+    });
+  }
+
+  function addGeneMutationCandidates(candidates, title) {
+    const knownGenePattern = /\b(CYP51A|ERG11|FKS1|HMG1|hmg1|SRB1|KPC|NDM-1|mecA|blaKPC|blaNDM)\b/g;
+    const mutationPattern = /\b(TR\d{2,3}\/[A-Z]\d{2,4}[A-Z]|[A-Z]\d{2,4}[A-Z]|[A-Z]{2,5}\d{1,3}[A-Z]?\/[A-Z]?\d{2,4}[A-Z]?)\b/g;
+    const blaPattern = /\bbla[A-Z0-9-]+\b/g;
+    [knownGenePattern, mutationPattern, blaPattern].forEach((pattern) => {
+      let match;
+      while ((match = pattern.exec(title)) !== null) {
+        addPubmedCandidate(candidates, {
+          term: match[0],
+          score: 90,
+          category: "gene",
+          index: match.index,
+          source: "gene-mutation",
+          matched: match[0],
+        });
+      }
+    });
+  }
+
+  function addDrugCandidates(candidates, title) {
+    TITLE_DRUG_TERMS.forEach((drug) => {
+      const match = title.match(new RegExp(`\\b${escapeRegExp(drug)}\\b`, "i"));
+      if (!match || match.index === undefined) return;
+      addPubmedCandidate(candidates, {
+        term: normalizeDrugTerm(drug),
+        score: 80,
+        category: "drug",
+        index: match.index,
+        source: "drug",
+        matched: match[0],
+      });
+    });
+  }
+
+  function addKeywordSupplementCandidates(candidates, keywords, title) {
+    splitKeywords(keywords).forEach((keyword, offset) => {
+      const mapped = PUBMED_KEYWORD_MAP[keyword] || TITLE_CONCEPT_MAP[keyword] || keyword;
+      const classification = classifyPubmedTerm(mapped);
+      if (classification.score < 65) return;
+      addPubmedCandidate(candidates, {
+        term: mapped,
+        score: Math.max(40, classification.score - 8),
+        category: classification.category,
+        index: title.length + offset,
+        source: "keyword-supplement",
+        matched: keyword,
+      });
+    });
+  }
+
+  function addPubmedCandidate(candidates, candidate) {
+    const term = normalizePubmedTerm(candidate.term);
+    if (!isUsefulPubmedTerm(term, candidate.category)) return;
+
+    const key = normalizeTermKey(term);
+    const existingIndex = candidates.findIndex((item) => normalizeTermKey(item.term) === key);
+    const normalizedCandidate = {
+      ...candidate,
+      term,
+      score: candidate.score || classifyPubmedTerm(term).score,
+      category: candidate.category || classifyPubmedTerm(term).category,
+    };
+
+    if (existingIndex === -1) {
+      candidates.push(normalizedCandidate);
+      return;
+    }
+
+    const existing = candidates[existingIndex];
+    if (
+      normalizedCandidate.score > existing.score ||
+      (normalizedCandidate.score === existing.score && normalizedCandidate.index < existing.index)
+    ) {
+      candidates[existingIndex] = normalizedCandidate;
+    }
+  }
+
+  function selectPubmedTerms(candidates) {
+    const selected = [];
+    sortCandidates(candidates).forEach((candidate) => {
+      if (!isCandidateIndependent(candidate, selected)) return;
+      if (selected.length < 2) {
+        selected.push(candidate);
+        return;
+      }
+      if (shouldUseThirdPubmedTerm(candidate, selected)) {
+        selected.push(candidate);
+      }
+    });
+    return selected.slice(0, 3);
+  }
+
+  function shouldUseThirdPubmedTerm(candidate, selected) {
+    if (selected.length !== 2) return false;
+    const hasSpecificObject = selected.some((item) => item.category === "species" || item.category === "pathogen");
+    if (hasSpecificObject) return false;
+    if (selected[0].score >= 85) return false;
+    return candidate.score >= 65 && !selected.some((item) => item.category === candidate.category);
+  }
+
+  function isCandidateIndependent(candidate, selected) {
+    if (!selected.length) return true;
+    if (candidate.category === "species" && selected.some((item) => item.category === "species")) return false;
+    if (candidate.category === "pathogen" && selected.some((item) => item.category === "species")) return false;
+    if (candidate.category === "species" && selected.some((item) => item.category === "pathogen")) return true;
+
+    return !selected.some((item) => arePubmedTermsRedundant(candidate.term, item.term));
+  }
+
+  function arePubmedTermsRedundant(a, b) {
+    const first = normalizeTermKey(a);
+    const second = normalizeTermKey(b);
+    if (first === second) return true;
+    if (first.includes(second) || second.includes(first)) return true;
+    if ((first.includes("sequencing") && second === "sequencing") || (second.includes("sequencing") && first === "sequencing")) return true;
+    if ((first.includes("resistance") && second === "resistance") || (second.includes("resistance") && first === "resistance")) return true;
+    if ((first.includes("infection") && second === "infection") || (second.includes("infection") && first === "infection")) return true;
+    return false;
+  }
+
+  function sortCandidates(candidates) {
+    return [...candidates].sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      if (a.index !== b.index) return a.index - b.index;
+      return b.term.length - a.term.length;
+    });
+  }
+
+  function classifyPubmedTerm(term) {
+    const normalized = normalizePubmedTerm(term);
+    const lower = normalized.toLowerCase();
+    if (/^[A-Z][a-z]+ [a-z][a-z-]+$/.test(normalized)) return { score: 100, category: "species" };
+    if (/^(candida|aspergillus|prototheca|klebsiella|mycobacterium|staphylococcus|streptococcus|cryptococcus)$/i.test(normalized)) {
+      return { score: 95, category: "pathogen" };
+    }
+    if (/^(sars-cov-2|covid-19|human papillomavirus|hpv)$/i.test(normalized)) return { score: 95, category: "pathogen" };
+    if (/cyp51a|erg11|fks1|hmg1|srb1|meca|blakpc|blandm|virulence gene|^[A-Z]\d{2,4}[A-Z]$|^TR\d{2,3}\/[A-Z]\d{2,4}[A-Z]$/i.test(normalized)) {
+      return { score: 90, category: "gene" };
+    }
+    if (/infection|aspergillosis|candidiasis|endocarditis|sepsis|resistance|lesion|disease|febrile illness/i.test(normalized)) {
+      return { score: 85, category: "disease" };
+    }
+    if (TITLE_DRUG_TERMS.some((drug) => lower === drug.toLowerCase())) return { score: 80, category: "drug" };
+    if (/sequencing|genome|pcr|maldi-tof|mass spectrometry|susceptibility testing|molecular diagnosis|lateral flow assay|cell-free dna/i.test(normalized)) {
+      return { score: 75, category: "technique" };
+    }
+    if (/epidemiology|surveillance|virulence|biofilm|diagnosis|microbiome|microbiota|multi-omics|transcriptomics|proteomics|metabolomics|mutation|susceptibility|prevalence|expression|distribution/i.test(normalized)) {
+      return { score: 65, category: "topic" };
+    }
+    return { score: 40, category: "general" };
+  }
+
+  function isUsefulPubmedTerm(term, category) {
+    const normalized = normalizePubmedTerm(term);
+    const lower = normalized.toLowerCase();
+    if (!normalized || /^\d{4}$/.test(normalized)) return false;
+    if (TITLE_STOP_WORDS.has(lower) || TITLE_GENERIC_TERMS.has(lower) || BROAD_PUBMED_KEYWORDS.has(lower)) return false;
+    if (category !== "gene" && isStrainIdentifier(normalized)) return false;
+    return true;
+  }
+
+  function isStrainIdentifier(term) {
+    return /^(?:strain|isolate)?\s*[A-Z]{1,4}\d{1,5}$/i.test(term) || /^ATCC\s*\d+$/i.test(term);
+  }
+
+  function normalizeComparableText(value) {
+    return String(value || "").normalize("NFKC").replace(/[‐‑‒–—]/g, "-").trim();
+  }
+
+  function normalizePubmedTerm(value) {
+    return normalizeComparableText(value)
+      .replace(/[“”]/g, "\"")
+      .replace(/^["'\s]+|["'\s.,;:，。；：]+$/g, "")
+      .replace(/\bgenomes\b/i, "genome")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function normalizeTermKey(term) {
+    return normalizePubmedTerm(term).toLowerCase().replace(/["']/g, "");
+  }
+
+  function normalizeDrugTerm(drug) {
+    return drug === "amphotericin B" ? "amphotericin B" : drug;
+  }
+
+  function formatPubmedTerm(term) {
+    const normalized = normalizePubmedTerm(term);
+    if (!normalized) return "";
+    return /\s/.test(normalized) ? `"${normalized.replace(/"/g, "")}"` : normalized;
+  }
+
+  function debugSimilarPubmed(paper, candidates, terms, query, url) {
+    if (!DEBUG_SIMILAR_PUBMED) return;
+    console.info("Similar PubMed query", {
+      title: paper?.title || "",
+      candidates: candidates.map((candidate) => ({
+        term: candidate.term,
+        score: candidate.score,
+        category: candidate.category,
+        source: candidate.source,
+        matched: candidate.matched,
+      })),
+      selectedTerms: terms,
+      query,
+      url,
+    });
+  }
+
+  function escapeRegExp(value) {
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
   function splitKeywords(value) {
